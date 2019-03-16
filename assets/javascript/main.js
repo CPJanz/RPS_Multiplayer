@@ -51,7 +51,6 @@ $(document).ready(function() {
     database.ref("/playerCount").once("value", function(snapshot) {
         playerId = snapshot.val() + 1;
         database.ref("/playerCount").set(playerId);
-        console.log("Player Id:", playerId);
     })
 
     // Check for game waiting to start, if one is found join it. If not, create one
@@ -73,7 +72,6 @@ $(document).ready(function() {
                         // Display game ready to start message and set controls to visible
                         if (round === 1) {
                             $("#chat").empty()
-                            console.log("trigger")
                             chatPost("Opponent Found. Select Rock Paper or Scissors to start playing.")
                         }
                         $(".game-controls").css("visibility", "visible");
@@ -86,7 +84,6 @@ $(document).ready(function() {
                 });
                 // Displays chat messages to the chat
                 database.ref("runningGames/" + gameId + "/chat").on("child_added", function(snapshot) {
-                    console.log(snapshot.val().message);
                     if (snapshot.val().player === playerId) {
                         chatPost("You: " + snapshot.val().message);
                     } else {
@@ -135,7 +132,6 @@ $(document).ready(function() {
 
             // Displays chat messages in chat.
             database.ref("runningGames/" + gameId + "/chat").on("child_added", function(snapshot) {
-                console.log(snapshot.val().message);
                 if (snapshot.val().player === playerId) {
                     chatPost("You: " + snapshot.val().message);
                 } else {
@@ -148,12 +144,11 @@ $(document).ready(function() {
 
 // On click event for rock, paper, scissors buttons
 $(document).on("click", ".throw-button", function() {
-    console.log($(this).attr("choice"));
     database.ref("runningGames/" + gameId + "/rounds/" + round + "/" + playerId).set($(this).attr("choice"));
 })
 
 // On click event for chat button
 $(document).on("click", "#chat-button", function() {
     database.ref("runningGames/" + gameId + "/chat").push({ player: playerId, message: ($("#chat-text").val()) });
-    $("chat-text").val("");
+    $("#chat-text").val("");
 })
